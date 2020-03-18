@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Buku;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BukuController extends Controller
 {
@@ -17,51 +19,55 @@ class BukuController extends Controller
     }
 
     //
-    public function index(){
-        $buku = Buku::all();
-         return response()->json($buku);
+    public function index()
+    {
+        $buku = DB::table('buku')
+        ->join('kategori', 'buku.id', '=', 'kategori.buku_id' )
+        ->select('buku.*', 'kategori.nama')
+        ->get();
+        return response()->json($buku);
     }
 
     public function create(Request $request)
     {
-       $buku = new Buku;
+        $buku = new Buku;
 
-      $buku->judul= $request->judul;
-      $buku->deskripsi = $request->deskripsi;
-      $buku->penulis = $request->penulis;
-      $buku->gambar = $request->gambar;
-      $buku->Buku_id = $request->Buku_id;
-      
-      $buku->save();
+        $buku->judul = $request->judul;
+        $buku->deskripsi = $request->deskripsi;
+        $buku->penulis = $request->penulis;
+        $buku->gambar = $request->gambar;
+        $buku->kategori_id = $request->kategori_id;
 
-      return response()->json($buku);
+        $buku->save();
+
+        return response()->json($buku);
     }
 
     public function show($id)
     {
-       $buku = Buku::find($id);
+        $buku = Buku::find($id);
 
-       return response()->json($buku);
+        return response()->json($buku);
     }
 
     public function update(Request $request, $id)
-    { 
-       $buku= Buku::find($id);
-       
-       $buku->judul = $request->input('judul');
-       $buku->deskripsi = $request->input('diskripsi');
-       $buku->penulis = $request->input('penulis');
-       $buku->gambar = $request->input('gambar');
-       $buku->Buku_id = $request->input('Buku_id');
-       
-       $buku->save();
-       return response()->json($buku);
+    {
+        $buku = Buku::find($id);
+
+        $buku->judul = $request->judul;
+        $buku->deskripsi = $request->deskripsi;
+        $buku->penulis = $request->penulis;
+        $buku->gambar = $request->gambar;
+        $buku->kategori_id = $request->kategori_id;
+
+        $buku->save();
+        return response()->json($buku);
     }
 
     public function destroy($id)
     {
-       $buku = Buku::find($id);
-       $buku->delete();
+        $buku = Buku::find($id);
+        $buku->delete();
 
         return response()->json('Buku removed successfully');
     }
